@@ -25,6 +25,10 @@ clicked = [
     0
 ]
 
+def takeFirst(elem):
+    index, loc, icon = elem
+    return clicked[index]
+
 class Button(QtWidgets.QPushButton):
     def __init__(self, index, x, y, icon, loc, parent):
         super().__init__(str(clicked[index]),parent)
@@ -32,6 +36,7 @@ class Button(QtWidgets.QPushButton):
         self.index = index
         self.xPos = x
         self.yPos = y
+        self.cont = parent
         self.loc = loc
         self.setIcon(QtGui.QIcon(icon))
         self.setIconSize(QtCore.QSize(30, 30))
@@ -41,13 +46,51 @@ class Button(QtWidgets.QPushButton):
             clicked[self.index]+=1
             self.setText(str(clicked[self.index]))
             os.startfile(self.loc)
+                # change all buttons
+            Apps.sort(key=takeFirst, reverse=True)
+            for button in self.cont.menu.buttons:
+                if button.index != Apps[button.index][0]:
+                    button.anim = QtCore.QPropertyAnimation(button, b"geometry")
+                    button.anim.setDuration(200)
+                    button.anim.setStartValue(QtCore.QRect(button.x(), button.y(), 50, 50))
+                    button.anim.setEndValue(QtCore.QRect(65, 65, 50, 50))
+                    button.anim.start()
+                    index, loc, icon = Apps[button.index]
+                    button.setIcon(QtGui.QIcon(icon))
+                    button.setText(str(clicked[index]))
+                    button.loc = loc
+                    button.index = index
+                    button.anim = QtCore.QPropertyAnimation(button, b"geometry")
+                    button.anim.setDuration(200)
+                    button.anim.setStartValue(QtCore.QRect(65, 65, 50, 50))
+                    button.anim.setEndValue(QtCore.QRect(65+button.xPos, 65+button.yPos, 50, 50))
+                    button.anim.start()
+            print(self.cont.menu.cent.index)
+            print(Apps)
+            if self.cont.menu.cent.index != Apps[0][0]:
+                self.cont.menu.cent.anim = QtCore.QPropertyAnimation(self.cont.menu.cent, b"geometry")
+                self.cont.menu.cent.anim.setDuration(200)
+                self.cont.menu.cent.anim.setStartValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 50, 50))
+                self.cont.menu.cent.anim.setEndValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 0, 0))
+                self.cont.menu.cent.anim.start()
+                index, loc, icon = Apps[0]
+                self.cont.menu.cent.setIcon(QtGui.QIcon(icon))
+                self.cont.menu.cent.setText(str(clicked[index]))
+                self.cont.menu.cent.loc = loc
+                self.cont.menu.cent.index = index
+                self.cont.menu.cent.anim = QtCore.QPropertyAnimation(self.cont.menu.cent, b"geometry")
+                self.cont.menu.cent.anim.setDuration(200)
+                self.cont.menu.cent.anim.setStartValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 0, 0))
+                self.cont.menu.cent.anim.setEndValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 50, 50))
+                self.cont.menu.cent.anim.start()         
 
 class CenterButton(QtWidgets.QPushButton):
-    def __init__(self, icon, loc, parent):
+    def __init__(self, index, icon, loc, parent):
         super().__init__("0", parent)
         self.setStyleSheet("width: 50px; height: 50px; border-radius: 25px; background-color: #f5f5f5;font-weight: bold;")
         self.cont = parent
         self.loc = loc
+        self.index = index
         self.setIcon(QtGui.QIcon(icon))
         self.setIconSize(QtCore.QSize(30, 30))
         self.timer = QtCore.QTimer()
@@ -57,10 +100,13 @@ class CenterButton(QtWidgets.QPushButton):
         self.oldPos = event.globalPos()
         if event.button() == QtCore.Qt.LeftButton:
             if self.timer.isActive():
+                clicked[self.index]+=1
+                self.setText(str(clicked[self.index]))
                 os.startfile(self.loc)
                 self.timer.stop()
             else:
                 self.timer.start(250)
+  
         elif event.button() == QtCore.Qt.RightButton:
             newDisplayIndex = self.cont.displayIndex;
             i = 0
@@ -143,14 +189,15 @@ class RadialTest(QtWidgets.QWidget):
 
         self.buttons = []
         for i, (x, y) in enumerate(ButtonLoc):
-            index, loc, icon = Apps[i+1]
-            b = Button(index, x, y, icon, loc, container)
+            index1, loc, icon = Apps[i+1]
+            b = Button(index1, x, y, icon, loc, container)
             b.move(65,65)
             self.buttons.append(b)
 
-        index, loc, icon = Apps[0]
-        center = CenterButton(icon, loc, container)
+        index2, loc, icon = Apps[0]
+        center = CenterButton(index2, icon, loc, container)
         center.move(65, 65)
+        self.cent = center
 
         self.show()
         self.showFullScreen()

@@ -29,7 +29,7 @@ clicked = [
 class Button(QtWidgets.QPushButton):
     def __init__(self, index, x, y, icon, loc, parent):
         super().__init__(str(clicked[index]),parent)
-        self.setStyleSheet("width: 50px; height: 50px; border-radius: 10px; background-color: #fafafa;")
+        self.setStyleSheet("width: 50px; height: 50px; border-radius: 10px; background-color: #f5f5f5;font-weight: bold;")
         self.index = index
         self.xPos = x
         self.yPos = y
@@ -46,7 +46,7 @@ class Button(QtWidgets.QPushButton):
 class CenterButton(QtWidgets.QPushButton):
     def __init__(self, icon, loc, parent):
         super().__init__("0", parent)
-        self.setStyleSheet('width: 50px; height: 50px; font-size: 15px; border-radius: 25px; background-color: #fafafa;')
+        self.setStyleSheet("width: 50px; height: 50px; border-radius: 25px; background-color: #f5f5f5;font-weight: bold;")
         self.cont = parent
         self.loc = loc
         self.setIcon(QtGui.QIcon(icon))

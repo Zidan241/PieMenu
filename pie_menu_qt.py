@@ -161,10 +161,11 @@ class CenterButton(QtWidgets.QPushButton):
             for button in self.cont.menu.buttons:
                 button.anim = QtCore.QPropertyAnimation(button, b"geometry")
                 button.anim.setDuration(200)
-                button.anim.setStartValue(QtCore.QRect(self.x(), self.y(), 50, 50))
-                button.anim.setEndValue(QtCore.QRect(self.x()+button.xPos, self.y()+button.yPos, 50, 50))
+                button.anim.setStartValue(QtCore.QRect(65, 65, 50, 50))
+                button.anim.setEndValue(QtCore.QRect(65+button.xPos, 65+button.yPos, 50, 50))
                 button.anim.start()
             pass
+
     
 class ContainerButton(QtWidgets.QPushButton):
     opened = False;
@@ -194,6 +195,7 @@ class RadialTest(QtWidgets.QWidget):
         self.setAcceptDrops(True)
 
         container = ContainerButton(self)
+        self.cont = container
 
         self.buttons = []
         for i, (x, y) in enumerate(ButtonLoc):
@@ -220,6 +222,25 @@ class RadialTest(QtWidgets.QWidget):
         position = event.pos()
         self.button.move(position)
         event.accept()
+    def keyPressEvent(self, event):
+        if event.key()==QtCore.Qt.Key_Meta:
+            if self.cont.opened==False:
+                self.cont.opened = True
+                for button in self.buttons:
+                    button.anim = QtCore.QPropertyAnimation(button, b"geometry")
+                    button.anim.setDuration(200)
+                    button.anim.setStartValue(QtCore.QRect(65, 65, 50, 50))
+                    button.anim.setEndValue(QtCore.QRect(65+button.xPos, 65+button.yPos, 50, 50))
+                    button.anim.start()
+            else:
+                self.cont.opened = False
+                for button in self.buttons:
+                    button.anim = QtCore.QPropertyAnimation(button, b"geometry")
+                    button.anim.setDuration(200)
+                    button.anim.setStartValue(QtCore.QRect(button.x(), button.y(), 50, 50))
+                    button.anim.setEndValue(QtCore.QRect(65, 65, 50, 50))
+                    button.anim.start()
+
 
 if __name__ == "__main__":
     app=QtWidgets.QApplication(sys.argv)

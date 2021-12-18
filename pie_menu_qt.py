@@ -9,12 +9,12 @@ ButtonLoc = [
     (0, -60)
 ]
 Apps = [
-    (0,'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe','chrome.png'),
+    (0,'C:\\Program Files\\Google\\Chrome\\Application','chrome.png'),
     (1,'C:\\Program Files\\Mozilla Firefox\\firefox.exe','firefox.png'),
     (2,'C:\\Users\\zidan\\AppData\\Local\\Discord\\Update.exe','discord.png'),
     (3,'C:\\Program Files\\Unity Hub\\Unity Hub.exe','unityhub.ico'),
     (4,'C:\\Program Files (x86)\\Steam','steam.png'),
-    (5,'C:\\Users\\zidan\\AppData\\Local\\anghami\\Anghami.exe','anghami.jpg'),
+    (5,'C:\\Users\\zidan','anghami.jpg'),
 ]
 clicked = [
     0,
@@ -48,46 +48,41 @@ class Button(QtWidgets.QPushButton):
             os.startfile(self.loc)
                 # change all buttons
             Apps.sort(key=takeFirst, reverse=True)
+            i=0;
             for button in self.cont.menu.buttons:
-                if button.index != Apps[button.index][0]:
+                tagetIndex = i+self.cont.displayIndex-4
+                if button.index != Apps[tagetIndex][0]:
                     button.anim = QtCore.QPropertyAnimation(button, b"geometry")
                     button.anim.setDuration(200)
                     button.anim.setStartValue(QtCore.QRect(button.x(), button.y(), 50, 50))
                     button.anim.setEndValue(QtCore.QRect(65, 65, 50, 50))
                     button.anim.start()
-                    index, loc, icon = Apps[button.index]
+
+                    index, loc, icon = Apps[tagetIndex]
                     button.setIcon(QtGui.QIcon(icon))
                     button.setText(str(clicked[index]))
                     button.loc = loc
                     button.index = index
+
                     button.anim = QtCore.QPropertyAnimation(button, b"geometry")
                     button.anim.setDuration(200)
                     button.anim.setStartValue(QtCore.QRect(65, 65, 50, 50))
                     button.anim.setEndValue(QtCore.QRect(65+button.xPos, 65+button.yPos, 50, 50))
                     button.anim.start()
-            print(self.cont.menu.cent.index)
-            print(Apps)
+                i+=1
+
             if self.cont.menu.cent.index != Apps[0][0]:
-                self.cont.menu.cent.anim = QtCore.QPropertyAnimation(self.cont.menu.cent, b"geometry")
-                self.cont.menu.cent.anim.setDuration(200)
-                self.cont.menu.cent.anim.setStartValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 50, 50))
-                self.cont.menu.cent.anim.setEndValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 0, 0))
-                self.cont.menu.cent.anim.start()
                 index, loc, icon = Apps[0]
                 self.cont.menu.cent.setIcon(QtGui.QIcon(icon))
                 self.cont.menu.cent.setText(str(clicked[index]))
                 self.cont.menu.cent.loc = loc
                 self.cont.menu.cent.index = index
-                self.cont.menu.cent.anim = QtCore.QPropertyAnimation(self.cont.menu.cent, b"geometry")
-                self.cont.menu.cent.anim.setDuration(200)
-                self.cont.menu.cent.anim.setStartValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 0, 0))
-                self.cont.menu.cent.anim.setEndValue(QtCore.QRect(self.cont.menu.cent.x(), self.cont.menu.cent.y(), 50, 50))
-                self.cont.menu.cent.anim.start()         
+        
 
 class CenterButton(QtWidgets.QPushButton):
     def __init__(self, index, icon, loc, parent):
         super().__init__("0", parent)
-        self.setStyleSheet("width: 50px; height: 50px; border-radius: 25px; background-color: #f5f5f5;font-weight: bold;")
+        self.setStyleSheet("width: 50px; height: 50px; border-radius: 25px; background-color: #C5C5C5;font-weight: bold;")
         self.cont = parent
         self.loc = loc
         self.index = index
@@ -131,8 +126,8 @@ class CenterButton(QtWidgets.QPushButton):
                     button.setEnabled(False)
                 button.anim = QtCore.QPropertyAnimation(button, b"geometry")
                 button.anim.setDuration(200)
-                button.anim.setStartValue(QtCore.QRect(self.x(), self.y(), 50, 50))
-                button.anim.setEndValue(QtCore.QRect(self.x()+button.xPos, self.y()+button.yPos, 50, 50))
+                button.anim.setStartValue(QtCore.QRect(65, 65, 50, 50))
+                button.anim.setEndValue(QtCore.QRect(65+button.xPos, 65+button.yPos, 50, 50))
                 button.anim.start()
                 i+=1
             if newDisplayIndex>=len(Apps):
@@ -140,12 +135,25 @@ class CenterButton(QtWidgets.QPushButton):
             else:
                 self.cont.displayIndex = newDisplayIndex
                 
-
     def mouseMoveEvent(self, event):
         self.buttonClicked = False
         delta = QtCore.QPoint (event.globalPos() - self.oldPos)
         self.cont.move(self.cont.x() + delta.x(), self.cont.y() + delta.y())
         self.oldPos = event.globalPos()
+        if delta.isNull():
+            for button in self.cont.menu.buttons:
+                button.anim = QtCore.QPropertyAnimation(button, b"geometry")
+                button.anim.setDuration(200)
+                button.anim.setStartValue(QtCore.QRect(button.x(), button.y(), 50, 50))
+                button.anim.setEndValue(QtCore.QRect(65, 65, 50, 50))
+                button.anim.start()
+        else:
+            for button in self.cont.menu.buttons:
+                button.anim = QtCore.QPropertyAnimation(button, b"geometry")
+                button.anim.setDuration(200)
+                button.anim.setStartValue(QtCore.QRect(65, 65, 50, 50))
+                button.anim.setEndValue(QtCore.QRect(65+button.xPos, 65+button.yPos, 50, 50))
+                button.anim.start()
 
     def enterEvent(self, QEvent):
         if self.cont.opened==False:

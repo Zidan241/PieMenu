@@ -38,9 +38,10 @@ class Button(QtWidgets.QPushButton):
         self.setIconSize(QtCore.QSize(30, 30))
 
     def mousePressEvent(self, event):
-        clicked[self.index]+=1
-        self.setText(str(clicked[self.index]))
-        os.startfile(self.loc)
+        if event.button() == QtCore.Qt.LeftButton:
+            clicked[self.index]+=1
+            self.setText(str(clicked[self.index]))
+            os.startfile(self.loc)
 
 class CenterButton(QtWidgets.QPushButton):
     def __init__(self, icon, loc, parent):
